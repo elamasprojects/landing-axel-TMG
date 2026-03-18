@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos, Privacidad y Reembolsos — The Money Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8D48B;
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #111111;
+  --bg-card: #161616;
+  --text-primary: #F5F1E8;
+  --text-secondary: #9A958A;
+  --text-muted: #5C5850;
+  --border: rgba(201, 168, 76, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Nav */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 20px 0;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.logo span {
+  font-weight: 300;
+  color: var(--text-secondary);
+}
+
+.nav-back {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-back:hover { color: var(--gold); }
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+.legal-header {
+  padding: 160px 0 80px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.legal-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.legal-header h1 em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.legal-header p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* TOC */
+.toc {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.toc-list {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.toc-list li a {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.toc-list li a:hover {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+/* Sections */
+.legal-section {
+  padding: 72px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.legal-section:last-of-type {
+  border-bottom: none;
+}
+
+.section-number {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.legal-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  margin-bottom: 40px;
+  color: var(--text-primary);
+}
+
+.legal-section h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 36px 0 16px;
+  color: var(--text-primary);
+}
+
+.legal-section h3:first-of-type {
+  margin-top: 0;
+}
+
+.legal-section p {
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.legal-section ul {
+  list-style: none;
+  margin: 16px 0 24px;
+}
+
+.legal-section ul li {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: 8px 0 8px 24px;
+  position: relative;
+  line-height: 1.6;
+}
+
+.legal-section ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* Highlight card */
+.legal-highlight {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  margin: 24px 0;
+}
+
+.legal-highlight p {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+.legal-highlight strong {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* Footer */
+footer {
+  padding: 48px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.3s ease;
+}
+
+footer a:hover { color: var(--gold); }
+
+/* Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .toc-list { flex-direction: column; gap: 16px; }
+  .legal-section { padding: 48px 0; }
+  .legal-header { padding: 130px 0 56px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container" style="max-width:1140px">
+    <a href="tmg-landing.html" class="logo">TMG <span>— The Money Game</span></a>
+    <a href="tmg-landing.html" class="nav-back">← Volver al inicio</a>
+  </div>
+</nav>
+
+<!-- Header -->
+<header class="legal-header">
+  <div class="container">
+    <h1>Términos, Privacidad<br>y <em>Reembolsos</em></h1>
+    <p>Última actualización: Marzo 2026</p>
+  </div>
+</header>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="container">
+    <p class="toc-tag">Contenido</p>
+    <ul class="toc-list">
+      <li><a href="#terminos">Términos y Condiciones</a></li>
+      <li><a href="#reembolsos">Política de Reembolsos</a></li>
+      <li><a href="#privacidad">Política de Privacidad</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Terms -->
+<div class="container">
+
+  <section class="legal-section reveal" id="terminos">
+    <p class="section-number">Sección 01</p>
+    <h2>Términos y Condiciones</h2>
+
+    <p>Al acceder y participar en The Money Game (TMG), aceptás los siguientes términos:</p>
+
+    <h3>1. Naturaleza del servicio</h3>
+    <p>TMG es un programa de educación financiera, mentoría y acompañamiento. No constituye asesoramiento financiero personalizado, legal ni fiscal.</p>
+
+    <div class="legal-highlight">
+      <p><strong>Importante:</strong> Las decisiones de inversión son responsabilidad exclusiva del usuario.</p>
+    </div>
+
+    <h3>2. Acceso al programa</h3>
+    <p>El acceso es personal e intransferible. Queda prohibido compartir el contenido, grabaciones o materiales sin autorización.</p>
+
+    <h3>3. Resultados</h3>
+    <p>TMG no garantiza resultados económicos específicos. Los resultados dependen de la situación, disciplina y ejecución de cada participante.</p>
+
+    <h3>4. Pagos</h3>
+    <p>El programa debe ser abonado en su totalidad o según el plan acordado. En caso de incumplimiento de pagos:</p>
+    <ul>
+      <li>Se podrá suspender el acceso al programa</li>
+      <li>Se podrá reclamar el saldo pendiente</li>
+    </ul>
+
+    <h3>5. Propiedad intelectual</h3>
+    <p>Todo el contenido de TMG es propiedad de la empresa. No puede ser reproducido, distribuido ni comercializado.</p>
+
+    <h3>6. Modificaciones</h3>
+    <p>TMG puede actualizar estos términos en cualquier momento.</p>
+  </section>
+
+  <!-- Refunds -->
+  <section class="legal-section reveal" id="reembolsos">
+    <p class="section-number">Sección 02</p>
+    <h2>Política de Reembolsos</h2>
+
+    <p>Debido a la naturaleza digital y educativa del programa, no se ofrecen reembolsos una vez realizado el pago.</p>
+
+    <div class="legal-highlight">
+      <p>Al completar la compra, el usuario acepta:</p>
+    </div>
+
+    <ul>
+      <li>Que está adquiriendo acceso inmediato a contenido digital</li>
+      <li>Que renuncia a su derecho de retracto una vez iniciado el programa</li>
+    </ul>
+  </section>
+
+  <!-- Privacy -->
+  <section class="legal-section reveal" id="privacidad">
+    <p class="section-number">Sección 03</p>
+    <h2>Política de Privacidad</h2>
+
+    <p>En TMG respetamos tu privacidad.</p>
+
+    <h3>1. Información recopilada</h3>
+    <p>Podemos recopilar:</p>
+    <ul>
+      <li>Nombre y apellido</li>
+      <li>Email</li>
+      <li>Información de pago</li>
+      <li>Datos relacionados a tu situación financiera (solo con fines del programa)</li>
+    </ul>
+
+    <h3>2. Uso de la información</h3>
+    <p>La información se utiliza para:</p>
+    <ul>
+      <li>Brindar el servicio</li>
+      <li>Mejorar la experiencia</li>
+      <li>Comunicación relacionada al programa</li>
+    </ul>
+
+    <h3>3. Protección de datos</h3>
+    <p>Implementamos medidas de seguridad para proteger tu información. No vendemos ni compartimos datos personales con terceros, salvo obligación legal.</p>
+
+    <h3>4. Cookies</h3>
+    <p>Podemos utilizar cookies para mejorar la experiencia del usuario en nuestra web.</p>
+
+    <h3>5. Derechos del usuario</h3>
+    <p>Podés solicitar:</p>
+    <ul>
+      <li>Acceso a tus datos</li>
+      <li>Modificación de tus datos</li>
+      <li>Eliminación de tus datos</li>
+    </ul>
+
+    <div class="legal-highlight">
+      <p>Para ejercer cualquiera de estos derechos, podés contactarnos directamente a través de los canales de comunicación del programa.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container">
+    <p>© 2026 The Money Game · Todos los derechos reservados</p>
+    <p style="margin-top:12px;"><a href="tmg-landing.html">Volver al inicio</a></p>
+  </div>
+</footer>
+
+<script>
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
