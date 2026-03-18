@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Money Game — Programa para Emprendedores</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8D48B;
+  --gold-dim: rgba(201, 168, 76, 0.15);
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #111111;
+  --bg-card: #161616;
+  --text-primary: #F5F1E8;
+  --text-secondary: #9A958A;
+  --text-muted: #5C5850;
+  --border: rgba(201, 168, 76, 0.12);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Utilities ── */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.gold { color: var(--gold); }
+
+/* ── Grain overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Navigation ── */
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 20px 0;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+nav.scrolled {
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.logo span {
+  font-weight: 300;
+  color: var(--text-secondary);
+}
+
+.nav-cta {
+  padding: 10px 28px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-cta:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 120px 0 80px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 780px;
+}
+
+.hero-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.4s;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold);
+  font-weight: 400;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 580px;
+  margin: 32px 0 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.6s;
+}
+
+.hero-bullets {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 40px;
+  margin-bottom: 56px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.8s;
+}
+
+.hero-bullets li {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  padding-left: 20px;
+  position: relative;
+}
+
+.hero-bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.cta-group {
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1s;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 18px 48px;
+  background: var(--gold);
+  color: var(--bg-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(201, 168, 76, 0.25);
+}
+
+.cta-note {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── Sections shared ── */
+section {
+  padding: 120px 0;
+}
+
+.section-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 32px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* ── Problem section ── */
+.problem {
+  background: var(--bg-secondary);
+  position: relative;
+}
+
+.problem-text {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.problem-text p {
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+.problem-text p.highlight {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+  font-weight: 400;
+  font-style: italic;
+  margin: 40px 0;
+}
+
+.problem-list {
+  list-style: none;
+  margin: 36px 0;
+  text-align: left;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.problem-list li {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  padding: 12px 0 12px 28px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.problem-list li::before {
+  content: '×';
+  position: absolute;
+  left: 0;
+  color: #C75050;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.problem-bottom {
+  text-align: center;
+  margin-top: 48px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.problem-bottom span {
+  color: var(--text-muted);
+  display: block;
+  font-size: 1rem;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: 8px;
+}
+
+/* ── Paradigm ── */
+.paradigm .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.paradigm-text p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+}
+
+.contrast-grid {
+  display: grid;
+  gap: 0;
+}
+
+.contrast-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.contrast-row:last-child { border-bottom: none; }
+
+.contrast-left {
+  text-align: right;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  padding-right: 24px;
+  text-decoration: line-through;
+  text-decoration-color: rgba(199, 80, 80, 0.4);
+}
+
+.contrast-arrow {
+  color: var(--gold);
+  font-size: 1.2rem;
+}
+
+.contrast-right {
+  text-align: left;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  padding-left: 24px;
+  font-weight: 500;
+}
+
+/* ── Promise ── */
+.promise {
+  background: var(--bg-secondary);
+}
+
+.promise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+
+.promise-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 40px 32px;
+  position: relative;
+  transition: all 0.35s ease;
+}
+
+.promise-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.promise-card .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem;
+  font-weight: 300;
+  color: var(--gold-dim);
+  color: rgba(201, 168, 76, 0.2);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.promise-card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.promise-card p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+/* ── Method ── */
+.method-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 64px;
+  position: relative;
+}
+
+.method-timeline::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), var(--border));
+}
+
+.phase {
+  padding: 0 24px;
+  position: relative;
+}
+
+.phase::before {
+  content: '';
+  position: absolute;
+  top: 34px;
+  left: 24px;
+  width: 12px;
+  height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+.phase-number {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 32px;
+}
+
+.phase h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin: 24px 0 16px;
+  color: var(--text-primary);
+}
+
+.phase-items {
+  list-style: none;
+}
+
+.phase-items li {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  padding-left: 14px;
+  position: relative;
+}
+
+.phase-items li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+/* ── Filter ── */
+.filter {
+  background: var(--bg-secondary);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-top: 56px;
+}
+
+.filter-col h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: 28px;
+}
+
+.filter-col.yes h3 { color: var(--gold); }
+.filter-col.no h3 { color: var(--text-muted); }
+
+.filter-list {
+  list-style: none;
+}
+
+.filter-list li {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  padding: 14px 0 14px 32px;
+  position: relative;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.filter-col.yes .filter-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.filter-col.no .filter-list li::before {
+  content: '×';
+  position: absolute;
+  left: 2px;
+  color: #C75050;
+  font-weight: 700;
+}
+
+/* ── Transformation ── */
+.transformation {
+  text-align: center;
+}
+
+.transform-shift {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin: 56px 0;
+}
+
+.transform-from, .transform-to {
+  padding: 32px 48px;
+}
+
+.transform-from {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-decoration: line-through;
+  text-decoration-color: rgba(199, 80, 80, 0.3);
+}
+
+.transform-arrow {
+  color: var(--gold);
+  font-size: 2rem;
+}
+
+.transform-to {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+.transform-values {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 40px;
+}
+
+.transform-values li {
+  list-style: none;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 18px;
+}
+
+.transform-values li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* ── Final CTA ── */
+.final-cta {
+  background: var(--bg-secondary);
+  text-align: center;
+  padding: 140px 0;
+  position: relative;
+}
+
+.final-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.final-cta .section-title {
+  margin-bottom: 20px;
+}
+
+.final-cta p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 460px;
+  margin: 0 auto 48px;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 40px 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+footer p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .paradigm .container {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .promise-grid {
+    grid-template-columns: 1fr;
+  }
+  .method-timeline {
+    grid-template-columns: 1fr 1fr;
+    gap: 48px 0;
+  }
+  .method-timeline::before { display: none; }
+  .phase::before { display: none; }
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .transform-shift {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .transform-values {
+    flex-wrap: wrap;
+    gap: 20px 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  section { padding: 80px 0; }
+  .hero-bullets { grid-template-columns: 1fr; }
+  .method-timeline { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 2.4rem; }
+  nav .nav-cta { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="container">
+    <div class="logo">TMG <span>— The Money Game</span></div>
+    <a href="#aplicar" class="nav-cta">Aplicar</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <p class="hero-tag">Programa privado para emprendedores</p>
+      <h1>Estás generando dinero.<br>Pero todavía no estás<br>construyendo <em>riqueza.</em></h1>
+      <p class="hero-sub">The Money Game es un programa para emprendedores que ya facturan, pero quieren convertir ingresos en activos, activos en libertad — y dejar de jugar el juego del status.</p>
+      <ul class="hero-bullets">
+        <li>Ordenar tus finanzas personales y de negocio</li>
+        <li>Crear un sistema de inversión automático</li>
+        <li>Dejar de depender emocionalmente del dinero</li>
+        <li>Construir riqueza a largo plazo</li>
+      </ul>
+      <div class="cta-group">
+        <a href="#aplicar" class="btn-primary">Aplicar al programa</a>
+        <span class="cta-note">Programa privado · Cupos limitados</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Problem -->
+<section class="problem">
+  <div class="container">
+    <div class="problem-text reveal">
+      <p class="section-tag" style="text-align:center">El problema real</p>
+      <h2 class="section-title" style="text-align:center">El problema no es cuánto ganás.<br><em>Es el juego que estás jugando.</em></h2>
+      <p>Muchos emprendedores logran algo que la mayoría nunca consigue: generar dinero. Pero después aparece otro problema.</p>
+      <p>Facturan más… pero también gastan más. El estilo de vida crece. La presión crece. La ansiedad también.</p>
+      <p class="highlight">Y sin darse cuenta, entran en un juego peligroso:</p>
+      <ul class="problem-list">
+        <li>Validarse por cuánto facturan</li>
+        <li>Tomar decisiones financieras sin estrategia</li>
+        <li>No saber realmente cuánto tienen</li>
+        <li>No convertir ingresos en patrimonio</li>
+      </ul>
+      <div class="problem-bottom">
+        Mucho movimiento.<br>Poca riqueza.
+        <span>Y pasan los años.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Paradigm Shift -->
+<section class="paradigm">
+  <div class="container">
+    <div class="paradigm-text reveal">
+      <p class="section-tag">Cambio de paradigma</p>
+      <h2 class="section-title">El dinero es un juego.<br><em>Y la mayoría lo está jugando sin reglas.</em></h2>
+      <p>En TMG no enseñamos a "ganar más". Enseñamos algo mucho más importante: cómo jugar el juego del dinero. Cuando entendés esto, todo cambia.</p>
+    </div>
+    <div class="contrast-grid reveal">
+      <div class="contrast-row">
+        <div class="contrast-left">Facturar</div>
+        <div class="contrast-arrow">→</div>
+        <div class="contrast-right">Construir riqueza</div>
+      </div>
+      <div class="contrast-row">
+        <div class="contrast-left">Ingresos</div>
+        <div class="contrast-arrow">→</div>
+        <div class="contrast-right">Activos</div>
+      </div>
+      <div class="contrast-row">
+        <div class="contrast-left">Status</div>
+        <div class="contrast-arrow">→</div>
+        <div class="contrast-right">Patrimonio</div>
+      </div>
+      <div class="contrast-row">
+        <div class="contrast-left">Corto plazo</div>
+        <div class="contrast-arrow">→</div>
+        <div class="contrast-right">Décadas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Promise -->
+<section class="promise">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag">Lo que vas a lograr</p>
+      <h2 class="section-title">Lo que vas a construir<br>dentro de <em>TMG</em></h2>
+    </div>
+    <div class="promise-grid">
+      <div class="promise-card reveal">
+        <div class="num">01</div>
+        <h3>Claridad total</h3>
+        <p>Visibilidad completa sobre tus finanzas, sin puntos ciegos ni suposiciones.</p>
+      </div>
+      <div class="promise-card reveal">
+        <div class="num">02</div>
+        <h3>Sistema financiero</h3>
+        <p>Tu arquitectura financiera personal diseñada y lista para operar en automático.</p>
+      </div>
+      <div class="promise-card reveal">
+        <div class="num">03</div>
+        <h3>Inversión automática</h3>
+        <p>Un sistema que invierte por vos cada mes, sin depender de tu voluntad o emociones.</p>
+      </div>
+      <div class="promise-card reveal">
+        <div class="num">04</div>
+        <h3>Portfolio personalizado</h3>
+        <p>Un portfolio alineado a tu perfil de riesgo, con acciones, crypto y renta fija.</p>
+      </div>
+      <div class="promise-card reveal">
+        <div class="num">05</div>
+        <h3>Decisiones racionales</h3>
+        <p>Dejá de tomar decisiones financieras desde la emoción, el miedo o la ansiedad.</p>
+      </div>
+      <div class="promise-card reveal">
+        <div class="num">06</div>
+        <h3>Riqueza generacional</h3>
+        <p>Empezá a pensar en décadas, no en meses. Construí algo que trascienda.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Method -->
+<section class="method">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag">El framework</p>
+      <h2 class="section-title">El método <em>TMG</em></h2>
+    </div>
+    <div class="method-timeline">
+      <div class="phase reveal">
+        <p class="phase-number">Fase 01</p>
+        <h3>Orden</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">Claridad total sobre tu situación.</p>
+        <ul class="phase-items">
+          <li>Ingresos</li>
+          <li>Gastos</li>
+          <li>Estructura de cuentas</li>
+          <li>Cashflow</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <p class="phase-number">Fase 02</p>
+        <h3>Sistema</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">Tu arquitectura financiera.</p>
+        <ul class="phase-items">
+          <li>Cuentas separadas</li>
+          <li>Sistema de inversión</li>
+          <li>Automatización</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <p class="phase-number">Fase 03</p>
+        <h3>Inversión</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">Creación de tu portfolio.</p>
+        <ul class="phase-items">
+          <li>Acciones</li>
+          <li>Crypto</li>
+          <li>Renta fija</li>
+          <li>Activos diversificados</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <p class="phase-number">Fase 04</p>
+        <h3>Mentalidad</h3>
+        <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">Tu relación con el dinero.</p>
+        <ul class="phase-items">
+          <li>Desapego</li>
+          <li>Largo plazo</li>
+          <li>Psicología del inversor</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Filter -->
+<section class="filter">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag">¿Es para vos?</p>
+      <h2 class="section-title">Esto no es para <em>cualquiera.</em></h2>
+    </div>
+    <div class="filter-grid">
+      <div class="filter-col yes reveal">
+        <h3>TMG es para vos si:</h3>
+        <ul class="filter-list">
+          <li>Sos emprendedor</li>
+          <li>Generás al menos $10k/mes</li>
+          <li>Querés construir riqueza real</li>
+          <li>Te interesa pensar en décadas</li>
+        </ul>
+      </div>
+      <div class="filter-col no reveal">
+        <h3>TMG NO es para vos si:</h3>
+        <ul class="filter-list">
+          <li>Buscás hacer dinero rápido</li>
+          <li>Querés trading o especulación</li>
+          <li>No estás dispuesto a cambiar hábitos financieros</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Transformation -->
+<section class="transformation">
+  <div class="container reveal">
+    <p class="section-tag">El resultado</p>
+    <h2 class="section-title">La verdadera <em>transformación</em></h2>
+    <p style="font-size:1.05rem; color:var(--text-secondary); max-width:480px; margin:0 auto;">No se trata solo de dinero. Se trata de cómo vivís.</p>
+    <div class="transform-shift">
+      <div class="transform-from">Perseguir dinero</div>
+      <div class="transform-arrow">→</div>
+      <div class="transform-to">Construir patrimonio</div>
+    </div>
+    <ul class="transform-values">
+      <li>Paz mental</li>
+      <li>Claridad financiera</li>
+      <li>Libertad de decisiones</li>
+      <li>Riqueza sin ansiedad</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Final CTA -->
+<section class="final-cta" id="aplicar">
+  <div class="container reveal">
+    <p class="section-tag">Siguiente paso</p>
+    <h2 class="section-title">Aplicar a <em>The Money Game</em></h2>
+    <p>TMG es un programa privado. Para mantener la calidad del proceso, trabajamos con un número limitado de personas. Si sentís que esto es para vos, podés aplicar.</p>
+    <a href="#" class="btn-primary">Aplicar al programa</a>
+    <span class="cta-note" style="display:block; margin-top:16px;">Cupos limitados · Proceso de selección</span>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>© 2026 The Money Game · Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<script>
+// Nav scroll effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
