@@ -461,6 +461,8 @@ section {
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, var(--gold), var(--border));
+  transform: scaleX(0);
+  transform-origin: left center;
 }
 
 .phase {
@@ -478,6 +480,8 @@ section {
   background: var(--gold);
   border-radius: 50%;
   z-index: 2;
+  opacity: 0;
+  transform: scale(0);
 }
 
 .phase-number {
@@ -691,6 +695,106 @@ footer p {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ── 1. Gold shimmer sweep on em tags ── */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.section-title em,
+.hero h1 em {
+  background: linear-gradient(
+    120deg,
+    var(--gold) 0%,
+    var(--gold) 35%,
+    var(--gold-light) 50%,
+    var(--gold) 65%,
+    var(--gold) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+/* ── 2. Divider expand from center ── */
+.divider {
+  transform: scaleX(0);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.divider.visible {
+  transform: scaleX(1);
+}
+
+/* ── 3. Staggered list items ── */
+.stagger-item {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.stagger-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── 4. Method timeline line draw ── */
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.method-timeline.animated::before {
+  transform-origin: left center;
+  animation: drawLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dotPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.4); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.method-timeline.animated .phase::before {
+  animation: dotPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+.method-timeline.animated .phase:nth-child(1)::before { animation-delay: 0.3s; }
+.method-timeline.animated .phase:nth-child(2)::before { animation-delay: 0.55s; }
+.method-timeline.animated .phase:nth-child(3)::before { animation-delay: 0.8s; }
+.method-timeline.animated .phase:nth-child(4)::before { animation-delay: 1.05s; }
+
+/* ── 5. Transform arrow continuous drift ── */
+@keyframes arrowDrift {
+  0%, 100% { transform: translateX(0); opacity: 0.7; }
+  50% { transform: translateX(10px); opacity: 1; }
+}
+
+.transform-arrow {
+  animation: arrowDrift 2.2s ease-in-out infinite;
+}
+
+/* ── Contrast row arrows slide-in ── */
+.contrast-row .contrast-arrow {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.contrast-grid.visible .contrast-row:nth-child(1) .contrast-arrow { transition-delay: 0.1s; }
+.contrast-grid.visible .contrast-row:nth-child(2) .contrast-arrow { transition-delay: 0.25s; }
+.contrast-grid.visible .contrast-row:nth-child(3) .contrast-arrow { transition-delay: 0.4s; }
+.contrast-grid.visible .contrast-row:nth-child(4) .contrast-arrow { transition-delay: 0.55s; }
+
+.contrast-grid.visible .contrast-arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* ── Responsive ── */
@@ -1002,7 +1106,7 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 60);
 });
 
-// Scroll reveal
+// Scroll reveal (sections)
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -1013,6 +1117,59 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
 reveals.forEach(el => observer.observe(el));
+
+// Divider expand on scroll
+const dividers = document.querySelectorAll('.divider');
+const dividerObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.5 });
+dividers.forEach(el => dividerObs.observe(el));
+
+// Staggered list items
+const staggerLists = document.querySelectorAll('.problem-list, .filter-list, .hero-bullets, .phase-items');
+staggerLists.forEach(list => {
+  list.querySelectorAll('li').forEach((li, i) => {
+    li.classList.add('stagger-item');
+    li.style.transitionDelay = `${i * 0.08}s`;
+  });
+});
+
+const staggerObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.stagger-item').forEach(item => {
+        item.classList.add('visible');
+      });
+    }
+  });
+}, { threshold: 0.2 });
+staggerLists.forEach(el => staggerObs.observe(el));
+
+// Method timeline draw
+const timeline = document.querySelector('.method-timeline');
+if (timeline) {
+  const tlObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animated');
+      }
+    });
+  }, { threshold: 0.3 });
+  tlObs.observe(timeline);
+}
+
+// Contrast grid arrows
+const contrastGrid = document.querySelector('.contrast-grid');
+if (contrastGrid) {
+  const cgObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.3 });
+  cgObs.observe(contrastGrid);
+}
 </script>
 
 </body>
